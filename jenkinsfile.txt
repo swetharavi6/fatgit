@@ -1,12 +1,14 @@
 pipeline {
     agent any
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('docker-hub-id') // ID from Jenkins Credentials
+        // FIXED: Added the missing closing quote below
+        DOCKERHUB_CREDENTIALS = credentials('docker-hub-creds') 
         IMAGE_NAME = "your-dockerhub-username/prime-app"
     }
     stages {
         stage('Checkout') {
             steps {
+                // Ensure the URL matches your GitHub repo
                 git 'https://github.com/swetharavi6/fatgit.git'
             }
         }
@@ -22,15 +24,17 @@ pipeline {
         }
         stage('Docker Build') {
             steps {
-                bat "docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} ."
+                bat "docker build -t %IMAGE_NAME%:%BUILD_NUMBER% ."
             }
         }
         stage('Push to Docker Hub') {
-            steps {bat "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
-                bat "docker push ${IMAGE_NAME}:${BUILD_NUMBER}"
+            steps {
+                // This block securely logs into Docker using your stored credentials
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                    bat "docker login -u %USER% -p %PASS%"
+                    bat "docker push %IMAGE_NAME%:%BUILD_NUMBER%"
+                }
             }
         }
     }
 }
-
-
