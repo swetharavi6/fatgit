@@ -7,7 +7,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com'
+                git 'https://github.com/swetharavi6/fatgit.git'
             }
         }
         stage('Test') {
