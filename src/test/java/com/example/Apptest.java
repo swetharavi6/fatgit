@@ -1,10 +1,10 @@
-package src.test.java.com.example;
+package com.example;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
-public class AppTest {
+ class AppTest{
     @Test
     public void testIsPrime() {
         assertTrue(App.isPrime(5));
